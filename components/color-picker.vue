@@ -56,7 +56,7 @@ const h = ref(265);
 const s = ref(80);
 const l = ref(99);
 
-const hex =  ref('ff0000');
+const hex =  ref('#ff0000');
 
 const r = ref(255);
 const g = ref(0);
@@ -84,6 +84,38 @@ const gradientH = ref(computed(() => {
     backgroundImage: `linear-gradient(to right, ${stops.join(', ')})`
   };
 }));
+
+// Méthode pour générer le dégradé en fonction de la valeur hexadécimale
+function generateHexGradient() {
+  const gradientColors = [];
+
+  // Générer les couleurs intermédiaires pour chaque valeur hexadécimale possible
+  for (let i = 0; i <= 0xFFFFFF; i++) {
+    gradientColors.push(`#${i.toString(16).padStart(6, '0')}`);
+  }
+
+  return gradientColors;
+}
+
+// Fonction pour convertir une couleur hexadécimale en valeurs RGB
+function hexToRgb(hex) {
+  // Supprimer le caractère # du début s'il est présent
+  hex = hex.replace(/^#/, '');
+
+  // Séparer la valeur hexadécimale en composantes R, G et B
+  const bigint = parseInt(hex, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+
+  return { r, g, b };
+}
+
+// Fonction pour convertir des valeurs RGB en couleur hexadécimale
+function rgbToHex(r, g, b) {
+  return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
+
 
 const gradientS = ref(computed(() => {
   const stops = [];
@@ -145,20 +177,26 @@ initColor();
               <h1 class="text-white m-0 text-4xl tracking-wide font-helvetica-neue text-shadow">{{ colorType }}</h1>
               <h3 class="mt-2 opacity-70 font-normal text-base text-shadow">
                 <span v-if="colorType === 'hsl'">{{ h }}, {{ s }}%, {{ l }}%</span>
-                <span v-else-if="colorType === 'hex'">#{{ h }}</span>
-                <span v-else-if="colorType === 'rgb'">{{ h }}, {{ s }}, {{ l }}</span>
+                <span v-else-if="colorType === 'hex'">{{ hex }}</span>
+                <span v-else-if="colorType === 'rgb'">{{ r }}, {{ g }}, {{ b }}</span>
               </h3>
             </div>
           </div>
           <div class="p-1 py-6">
-            <div class="w-full h-4 rounded-full border border-text-color mb-2" :style="gradientH">
+            <!--     Input HSL      -->
+            <div v-if="colorType === 'hsl'" class="w-full h-4 rounded-full border border-text-color mb-2" :style="gradientH">
               <input class="appearance-none w-full bg-transparent focus:outline-none w-100 m-0 input-range" type="range" min="0" max="360" v-model="h" @click="updateColor" style="-webkit-appearance: none;"/>
             </div>
-            <div class="w-full h-4 rounded-full border border-text-color mb-2" :style="gradientS">
+            <div v-if="colorType === 'hsl'" class="w-full h-4 rounded-full border border-text-color mb-2" :style="gradientS">
               <input class="appearance-none w-full bg-transparent focus:outline-none w-100 m-0 input-range" type="range" min="0" max="100" v-model="s" @click="updateColor" style="-webkit-appearance: none;"/>
             </div>
-            <div class="w-full h-4 rounded-full border border-text-color mb-2" :style="gradientL">
+            <div v-if="colorType === 'hsl'" class="w-full h-4 rounded-full border border-text-color mb-2" :style="generateHexGradient">
               <input class="appearance-none w-full bg-transparent focus:outline-none w-100 m-0 input-range" type="range" min="0" max="100" v-model="l" @click="updateColor" style="-webkit-appearance: none;"/>
+            </div>
+
+            <!--     Input HSL      -->
+            <div v-if="colorType === 'hex'" class="w-full h-4 rounded-full border border-text-color mb-2" :style="{ 'background-image': `linear-gradient(to right, ${generateHexGradient().join(', ')})` }">
+              <input class="appearance-none w-full bg-transparent focus:outline-none w-100 m-0 input-range" type="range" min="0" max="16777215" v-model="hex" @input="updateColor" style="-webkit-appearance: none;"/>
             </div>
 
 
@@ -177,7 +215,7 @@ initColor();
 
               <!--     Input Hex      -->
               <div v-else-if="colorType === 'hex'" class="w-full flex flex-row">
-                <input class="flex-1 rounded-md p-1" type="text" v-model="h">
+                <input class="flex-1 rounded-md p-1" type="text" v-model="hex">
               </div>
 
               <!--     Input RGB      -->
