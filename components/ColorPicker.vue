@@ -1,28 +1,12 @@
 <script setup lang="ts">
 import { inject } from 'vue'
-const colorTrue = inject('color');
 
 const eventSidePannel = ref(true);
 
 const colorType = ref('hsl');
 
-function changeColorType() {
-  switch (colorType.value) {
-    case 'hsl':
-      colorType.value = "rgb";
-      break;
-    case 'rgb':
-      colorType.value = 'hex';
-      break;
-    case 'hex':
-      colorType.value = 'hsl';
-      break;
-  };
-  return;
-}
 // Fonction pour la conversion HSB en HSL
 function hsb2hsl(h: number, s: number, b: number) {
-  console.log('hsb2hsl:', h, s, b);
   const hsl = {
     h: h,
     l: (2 - s) * b,
@@ -65,7 +49,6 @@ const b = ref(0);
 // Calculs calculés
 const color = ref(computed(() => {
   const hsl = hsb2hsl(h.value / 360, s.value / 100, l.value / 100);
-  console.log('color:', hsl);
   return `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
 }));
 
@@ -96,26 +79,6 @@ function generateHexGradient() {
 
   return gradientColors;
 }
-
-// Fonction pour convertir une couleur hexadécimale en valeurs RGB
-function hexToRgb(hex) {
-  // Supprimer le caractère # du début s'il est présent
-  hex = hex.replace(/^#/, '');
-
-  // Séparer la valeur hexadécimale en composantes R, G et B
-  const bigint = parseInt(hex, 16);
-  const r = (bigint >> 16) & 255;
-  const g = (bigint >> 8) & 255;
-  const b = bigint & 255;
-
-  return { r, g, b };
-}
-
-// Fonction pour convertir des valeurs RGB en couleur hexadécimale
-function rgbToHex(r, g, b) {
-  return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-}
-
 
 const gradientS = ref(computed(() => {
   const stops = [];
@@ -158,7 +121,6 @@ const initColor = () => {
 };
 
 const updateColor = () => {
-  console.log('updateColor:', h.value, s.value, l.value);
   color.value = `hsl(${h.value}, ${s.value}%, ${l.value}%)`;
   colorString.value = `${h.value}, ${s.value}%, ${l.value}%`;
 };
@@ -169,7 +131,7 @@ initColor();
 
 <template>
   <div class="flex w-full h-full justify-center items-center">
-    <div class="w-100 h-100 fixed z-0" v-if="isVisible"><!-- @click="hide"-->
+    <div class="w-100 h-100 fixed z-0" v-if="isVisible">
       <transition name="pop">
         <div class="w-60 border-[1px] border-color-background bg-color-background z-2 rounded-lg shadow-md" v-if="isVisible">
           <div class="h-64 flex justify-center items-center text-white rounded-t-lg" :style="{ 'background': color }">
@@ -184,50 +146,24 @@ initColor();
           </div>
           <div class="p-1 py-6">
             <!--     Input HSL      -->
-            <div v-if="colorType === 'hsl'" class="w-full h-4 rounded-full border border-text-color mb-2" :style="gradientH">
+            <div class="w-full h-4 rounded-full border border-text-color mb-2" :style="gradientH">
               <input class="appearance-none w-full bg-transparent focus:outline-none w-100 m-0 input-range" type="range" min="0" max="360" v-model="h" @click="updateColor" style="-webkit-appearance: none;"/>
             </div>
-            <div v-if="colorType === 'hsl'" class="w-full h-4 rounded-full border border-text-color mb-2" :style="gradientS">
+            <div class="w-full h-4 rounded-full border border-text-color mb-2" :style="gradientS">
               <input class="appearance-none w-full bg-transparent focus:outline-none w-100 m-0 input-range" type="range" min="0" max="100" v-model="s" @click="updateColor" style="-webkit-appearance: none;"/>
             </div>
-            <div v-if="colorType === 'hsl'" class="w-full h-4 rounded-full border border-text-color mb-2" :style="generateHexGradient">
+            <div class="w-full h-4 rounded-full border border-text-color mb-2" :style="generateHexGradient">
               <input class="appearance-none w-full bg-transparent focus:outline-none w-100 m-0 input-range" type="range" min="0" max="100" v-model="l" @click="updateColor" style="-webkit-appearance: none;"/>
             </div>
-
-            <!--     Input HSL      -->
-            <div v-if="colorType === 'hex'" class="w-full h-4 rounded-full border border-text-color mb-2" :style="{ 'background-image': `linear-gradient(to right, ${generateHexGradient().join(', ')})` }">
-              <input class="appearance-none w-full bg-transparent focus:outline-none w-100 m-0 input-range" type="range" min="0" max="16777215" v-model="hex" @input="updateColor" style="-webkit-appearance: none;"/>
-            </div>
-
-
-
             <div class="w-full flex flex-col">
-              <button class="w-full h-10 bg-color-text/50 hover:bg-color-text/30 text-color-background font-bold px-4 rounded mb-2"
-                      @click="changeColorType()">
-                {{ colorType }}
-              </button>
               <!--     Input HSL      -->
-              <div v-if="colorType === 'hsl'" class="w-full flex flex-row">
+              <div class="w-full flex flex-row">
                 <input class="flex-1 rounded-md p-1" min="0" max="360" type="number" v-model="h">
                 <input class="flex-1 rounded-md p-1 mx-1" min="0" max="100" type="number" v-model="s">
                 <input class="flex-1 rounded-md p-1" min="0" max="100" type="number" v-model="l">
               </div>
-
-              <!--     Input Hex      -->
-              <div v-else-if="colorType === 'hex'" class="w-full flex flex-row">
-                <input class="flex-1 rounded-md p-1" type="text" v-model="hex">
-              </div>
-
-              <!--     Input RGB      -->
-              <div v-else-if="colorType === 'rgb'" class="w-full flex flex-row">
-                <input class="flex-1 rounded-md p-1" min="0" max="255" type="number" v-model="h">
-                <input class="flex-1 rounded-md p-1 mx-1" min="0" max="255" type="number" v-model="s">
-                <input class="flex-1 rounded-md p-1" min="0" max="255" type="number" v-model="l">
-              </div>
             </div>
-
           </div>
-
         </div>
       </transition>
     </div>
@@ -235,8 +171,6 @@ initColor();
 </template>
 
 <style scoped>
-
-
 .input-range[type=range]::-ms-track {
   width: 100%;
   cursor: pointer;
@@ -256,5 +190,4 @@ initColor();
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.12);
   margin-top: -4px;
 }
-
 </style>
