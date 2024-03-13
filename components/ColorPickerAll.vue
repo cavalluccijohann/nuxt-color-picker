@@ -3,10 +3,8 @@ import tinycolor from 'tinycolor2';
 
 onMounted(() => {
 
-  const addSwatch = document.getElementById('add-swatch') as HTMLElement;
   const modeToggle = document.getElementById('mode-toggle') as HTMLElement;
   const swatches = document.getElementsByClassName('default-swatches')[0] as HTMLElement;
-  const colorIndicator = document.getElementById('color-indicator') as HTMLElement;
   const userSwatches = document.getElementById('user-swatches') as HTMLElement;
 
   const spectrumCanvas = document.getElementById('spectrum-canvas') as HTMLCanvasElement;
@@ -50,36 +48,11 @@ onMounted(() => {
         '#5BA8C4',
         '#E64AA9'
       ];
-      this.addDefaultSwatches();
       this.createShadeSpectrum();
       this.createHueSpectrum();
     }
 
 
-    addDefaultSwatches() {
-      for (let i = 0; i < this.defaultSwatches.length; ++i) {
-        this.createSwatch(swatches, this.defaultSwatches[i]);
-      }
-    }
-
-    createSwatch(target: HTMLElement, color: string) {
-      const swatch = document.createElement('button');
-      swatch.classList.add('swatch');
-      swatch.setAttribute('title', color);
-      swatch.style.backgroundColor = color;
-      swatch.addEventListener('click', function () {
-        const color = tinycolor(this.style.backgroundColor);
-        colorToPos(color);
-        setColorValues(color);
-      });
-      target.appendChild(swatch);
-      this.refreshElementRects();
-    }
-
-    refreshElementRects() {
-      spectrumRect = spectrumCanvas.getBoundingClientRect();
-      hueRect = hueCanvas.getBoundingClientRect();
-    }
 
     createShadeSpectrum(color?: string) {
       const canvas = spectrumCanvas;
@@ -128,6 +101,10 @@ onMounted(() => {
 
   const colorPicker = new ColorPicker();
 
+  function refreshElementRects() {
+    spectrumRect = spectrumCanvas.getBoundingClientRect();
+    hueRect = hueCanvas.getBoundingClientRect();
+  }
   function colorToHue(color: string) {
     const colorValue = tinycolor(color);
     const hueString = tinycolor(`hsl ${colorValue.toHsl().h} 1 .5`).toHslString();
@@ -151,7 +128,6 @@ onMounted(() => {
     updateHueCursor(hueY);
     colorPicker.createShadeSpectrum(colorToHue(color));
     hueCursor.style.backgroundColor = `hsl(${colorValue.toHsl().h},100%, 50%)`;
-    colorIndicator.style.backgroundColor = color;
     document.body.style.backgroundColor = color;
     spectrumCursor.style.backgroundColor = color;
 
@@ -171,7 +147,6 @@ onMounted(() => {
   function setCurrentColor(color: string) {
     const colorValue = tinycolor(color);
     currentColor = color;
-    colorIndicator.style.backgroundColor = color;
     document.body.style.backgroundColor = color;
     spectrumCursor.style.backgroundColor = color;
     hueCursor.style.backgroundColor = `hsl(${colorValue.toHsl().h},100%, 50%)`;
@@ -289,18 +264,13 @@ onMounted(() => {
     }
   });
 
-
-  addSwatch.addEventListener('click', function () {
-    colorPicker.createSwatch(userSwatches, currentColor);
-  });
-
   modeToggle.addEventListener('click', function () {
     rgbFields.classList.toggle('active');
     hexField.classList.toggle('active');
   });
 
   window.addEventListener('resize', function () {
-    this.refreshElementRects();
+    refreshElementRects();
   });
 
   new ColorPicker();
@@ -322,12 +292,12 @@ onMounted(() => {
       </div>
       <div class="absolute top-5 -bottom-56 right-[3.7rem] w-7 -rotate-90">
         <button id="hue-cursor"
-                class="color-cursor z-10 border border-white rounded-full bg-gray-300 absolute pointer-events-none transition-all duration-200 ease-in-out top-0 left-1/2 h-5 w-full -mt-3 -ml-3.5 cursor-pointer"></button>
+                class="color-cursor z-10 border border-white rounded-full bg-gray-300 absolute pointer-events-none transition-all duration-200 ease-in-out top-0 left-1/2 h-5 w-full -mt-3 -ml-3.5"></button>
         <canvas id="hue-canvas"
                 class="absolute top-0 left-0 right-0 bottom-0 w-full h-4/6 bg-gray-300 rounded-lg rotate-180"></canvas>
       </div>
     </div>
-    <div class="relative m-0 mb-10 ml-0 px-2 flex flex-row items-center justify-center content-center">
+    <div class="relative m-0 mb-5 ml-0 px-2 flex flex-row items-center justify-center content-center">
       <div id="rgb-fields" class="field-group value-fields rgb-fields active">
         <div class="field-group">
           <label for="" class="field-label">R:</label>
@@ -342,7 +312,7 @@ onMounted(() => {
           <input type="number" max="255" min="0" id="blue" class="field-input rgb-input rounded-lg">
         </div>
       </div>
-      <div id="hex-field" class="field-group value-fields hex-field">
+      <div id="hex-field" class="field-group value-fields hex-field mr-2.5">
         <label for="" class="field-label">Hex:</label>
         <input type="text" id="hex" class="field-input rounded-lg">
       </div>
@@ -351,60 +321,15 @@ onMounted(() => {
         Mode
       </button>
     </div>
-    <div class="relative m-0 mr-10 mb-10 ml-10 content-normal display-table clear-both">
-      <h2 class="bg-gray-900 p-2 m-0 -mx-4 my-4 text-center">User Colors</h2>
-      <div id="user-swatches" class="swatches custom-swatches"></div>
-      <button id="add-swatch"
-              class="button bg-gray-700 border-0 rounded-md text-gray-400 text-base font-normal shadow-md outline-none cursor-pointer py-1 px-2 block px-6 py-6 w-52 mx-auto mt-10">
-        <span id="color-indicator" class="inline-block align-middle mr-5 w-5 h-5 rounded-4 bg-gray-400"></span>
-        <span>Add to Swatches</span>
-      </button>
-    </div>
-    <div class="relative mr-10 mt-10 mb-6 ml-10">
-      <div class="swatch default-swatches max-w-md"></div>
-      <button
-          class="button bg-gray-700 border-0 rounded-md text-gray-400 text-base font-normal shadow-md outline-none cursor-pointer py-1 px-2 absolute top-0 right-0 w-16 h-16 block">
-        Get Color
-      </button>
-    </div>
   </div>
 
 </template>
 
 <style scoped>
-body {
-  background: #1f232a;
-  font-family: "Proxima Nova", sans-serif;
-  color: #8b949a;
-  letter-spacing: 0.05em;
-  transition: background 0.5s ease;
-}
 
-.swatch {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  background: #ccc;
-  border-radius: 4px;
-  margin-left: 4px;
-  margin-bottom: 4px;
-  box-sizing: border-box;
-  border: 2px solid #364347;
-  cursor: pointer;
-}
-
-.default-swatches {
-}
-
-.default-swatches .swatch:nth-child(6n + 1) {
-  margin-left: 0;
-}
 
 .color-cursor.dragging {
   transition: none;
-}
-
-.button {
 }
 
 button:active {

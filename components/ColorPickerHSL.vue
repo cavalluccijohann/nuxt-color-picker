@@ -123,6 +123,7 @@ const initColor = () => {
 const updateColor = () => {
   color.value = `hsl(${h.value}, ${s.value}%, ${l.value}%)`;
   colorString.value = `${h.value}, ${s.value}%, ${l.value}%`;
+  document.body.style.backgroundColor = color.value;
 };
 
 initColor();

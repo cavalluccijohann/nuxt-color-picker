@@ -10,7 +10,6 @@ function changePage(id: number) {
       item.display = false;
     }
   });
-  console.log(page.value);
 }
 
 </script>
