@@ -1,90 +1,43 @@
 ![image](public/project-preview.png)
 
-It's a minimal starter for Nuxt 3 and start building your next web application simply and quickly. Including :
+This project features two custom color selectors, developed using Tailwind CSS, Nuxt.js and TypeScript. The selectors are designed to provide a simple, intuitive experience when choosing colors for your projects.
+Including :
 - [Tailwind CSS](https://tailwindcss.com/)
-- Color mode (dark & light)
+- [Nuxt.js](https://nuxt.com/docs/getting-started/introduction)
+- [TypeScript](https://tailwindcss.com/docs/installation)
+- [tinycolor2](https://www.npmjs.com/package/tinycolor2)
 
 
 ## Quick Setup
 
---- 
-
-To get started, follow these steps:
-
-
+1. Clone this repository if you have access or download it from the store
 ```bash
-# npm
-npm install
+git clone git@github.com:cavalluccijohann/nuxt-color-picker.git
+```
 
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
+2. Install dependencies
+```bash
 bun install
 ```
 
-## Development Server
-
----
-
-Start the development server on `http://localhost:3000`:
-
+3. Start development server
 ```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
+bun dev
 ```
 
-## Production
-
----
-
-Build the application for production:
-
+4. Generate static project
 ```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
+bun generate
 ```
 
-Locally preview production build:
-
+5. Start production server
 ```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
+bun start
 ```
 
 ## Author
 
 ---
 
-- [Johann Cavallucci]('https://github.com/cavalluccijohann')
+- [Johann Cavallucci]('https://johanncvl.com/')
 
