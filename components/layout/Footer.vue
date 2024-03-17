@@ -7,7 +7,7 @@
     <div class="p-5">
       <div class="flex justify-between items-center">
         <p class="text-sm text-gray-500 dark:text-gray-400">
-          ©2024 Nuxt Color Picker
+          ©2024 Nuxt Color Picker - By JohannCVL
         </p>
         <div class="w-auto h-4 flex justify-between items-center">
           <a class="w-4 h-4 mr-3" href="https://github.com/cavalluccijohann" target="_blanck">

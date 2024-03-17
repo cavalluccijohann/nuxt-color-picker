@@ -327,7 +327,6 @@ onMounted(() => {
 
 <style scoped>
 
-
 .color-cursor.dragging {
   transition: none;
 }
