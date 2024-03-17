@@ -7,6 +7,18 @@ Including :
 - [TypeScript](https://tailwindcss.com/docs/installation)
 - [tinycolor2](https://www.npmjs.com/package/tinycolor2)
 
+---
+
+## Add to your project
+
+1. Copy the `components/ColorPicker.vue` or `components/ColorPickerItem.vue` files to your project
+
+2. Add the following code to your component
+```bash
+bun i -D @types/tinycolor2
+```
+
+---
 
 ## Quick Setup
 
